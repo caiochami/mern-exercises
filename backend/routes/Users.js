@@ -20,4 +20,30 @@ router.route("/").post((req, res) => {
     .catch((error) => res.status(400).json("Error: " + error));
 });
 
+router.route("/:id").get((req, res) => {
+    const id = req.params.id;
+
+    User.findById(id)
+    .then( user => res.json(user) )
+    .catch(() => res.status(404).json("User not found"));
+});
+
+router.route("/:id").delete((req, res) => {
+  const id = req.params.id;
+
+  User.findByIdAndDelete(id)
+  .then( user => res.json("User: " + user.id + " removed successfully") )
+  .catch(() => res.status(404).json("User not found"));
+
+});
+
+router.route("/:id").put((req, res) => {
+  const id = req.params.id;
+
+  User.findByIdAndUpdate(id, req.body)
+  .then( user => res.json("User: " + user.id + " updated successfully") )
+  .catch(() => res.status(404).json("User not found"));
+
+});
+
 module.exports = router;
