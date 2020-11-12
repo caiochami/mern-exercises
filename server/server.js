@@ -4,8 +4,12 @@ const jsonwebtoken = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 require("dotenv").config();
+
 const app = express();
 const port = process.env.PORT || 5000;
+
+const User = require("./models/user.model");
+const Token = require("./models/token.model");
 
 var NotFoundError = require("./errors/NotFoundError");
 
@@ -26,7 +30,6 @@ connection.once("open", () => {
   console.log("MongoDB database connection established successfully");
 });
 
-
 function verifyJwt(req, res, next) {
   if (["/register", "/login"].includes(req.path)) return next();
 
@@ -35,9 +38,20 @@ function verifyJwt(req, res, next) {
 
   if (token == null) return res.sendStatus(401);
 
-  jsonwebtoken.verify(token, process.env.JWT_SECRET, (error, user) => {
+  jsonwebtoken.verify(token, process.env.JWT_SECRET, async (error, user) => {
     if (error) return res.sendStatus(403);
-    req.user = user;
+
+    if (!(await Token.findOne({ token }))) {
+      return res.status(404).json("Token not found");
+    }
+
+    let exists = await User.findOne({ email: user.email });
+
+    if (!exists) {
+      return res.status(404).json("User not found");
+    }
+
+    req.user = exists;
     next();
   });
 }

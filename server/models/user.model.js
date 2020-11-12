@@ -91,12 +91,14 @@ userSchema.methods.createToken = async function () {
   return await newToken.save();
 };
 
-userSchema.methods.revokeTokens = async function () {
-  let tokens = await this.tokens()
+userSchema.methods.revokeTokens = async function (ids = []) {
+  if (!ids.length) {
+    let tokens = await this.tokens();
 
-  let ids = tokens.map((token) => {
-    return token._id;
-  });
+    ids = tokens.map((token) => {
+      return token._id;
+    });
+  }
 
   return await Token.deleteMany({
     _id: {

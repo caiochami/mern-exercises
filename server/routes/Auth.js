@@ -18,7 +18,7 @@ router.post("/login", validate(AUTH_RULES), async (req, res) => {
   const { email, password } = req.body;
 
   process.nextTick(async () => {
-    let user = await User.findOne(
+    await User.findOne(
       {
         email,
       },
@@ -54,18 +54,12 @@ router.post("/login", validate(AUTH_RULES), async (req, res) => {
   });
 });
 
-router.post("/logout", function (req, res) {
-  console.log(req.user);
+router.post("/logout", async function (req, res) {
+  res.json(await req.user.revokeTokens());
 });
 
 router.post("/tokens", async function (req, res) {
-  const user = await User.findOne({ email: req.user.email });
-
-  if (user) {
-    res.json(await user.tokens());
-  } else {
-    res.json("user not found");
-  }
+  res.json(await req.user.tokens());
 });
 
 router.post(
@@ -96,10 +90,10 @@ router.post(
     newUser.save(async function (err, user) {
       if (err) {
         if (err.name === "MongoError" && err.code === 11000) {
-          res.status(422).json(new UnavailableError(400, err));
+          return res.status(422).json(new UnavailableError(400, err));
         }
       } else {
-        res.json(await user.createToken());
+        return res.json(await user.createToken());
       }
 
       //process.exit();
