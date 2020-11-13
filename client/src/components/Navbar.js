@@ -1,20 +1,18 @@
-import { Link } from "react-router-dom";
-import { ListGroup } from "react-bootstrap"
+import { } from "react-router-dom";
+import { Navbar as N} from "react-bootstrap";
 
-function Navbar() {
-
+function Navbar(props) {
+  console.log("auth" , props.auth)
   return (
-    <ListGroup className="mb-2" horizontal>
-      <ListGroup.Item>
-        <Link className="none" to="/">Home</Link>
-      </ListGroup.Item>
-      <ListGroup.Item>
-        <Link className="none" to="/exercises">Exercises List</Link>
-      </ListGroup.Item>
-      <ListGroup.Item>
-        <Link className="none" to="/users">Users List</Link>
-      </ListGroup.Item>
-    </ListGroup>
+    <N>
+      <N.Brand href="#home">Navbar with text</N.Brand>
+      <N.Toggle />
+      <N.Collapse className="justify-content-end">
+        <N.Text>
+          Signed in as: <a href="#login">Mark Otto</a>
+        </N.Text>
+      </N.Collapse>
+    </N>
   );
 }
 
