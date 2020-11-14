@@ -39,7 +39,7 @@ function verifyJwt(req, res, next) {
   if (token == null) return res.sendStatus(401);
 
   jsonwebtoken.verify(token, process.env.JWT_SECRET, async (error, user) => {
-    if (error) return res.sendStatus(403);
+    if (error) return res.status(403).json("Token provided is invalid or has expired");
 
     if (!(await Token.findOne({ token }))) {
       return res.status(404).json("Token not found");
@@ -51,7 +51,11 @@ function verifyJwt(req, res, next) {
       return res.status(404).json("User not found");
     }
 
-    req.user = exists;
+    req.user = {
+      id: exists._id,
+      name: exists.name,
+      email: exists.email
+    };
     next();
   });
 }

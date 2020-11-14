@@ -58,6 +58,10 @@ router.post("/logout", async function (req, res) {
   res.json(await req.user.revokeTokens());
 });
 
+router.post("/me", function (req, res) {
+  res.json(req.user);
+});
+
 router.post("/tokens", async function (req, res) {
   res.json(await req.user.tokens());
 });
